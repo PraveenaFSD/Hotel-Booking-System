@@ -39,14 +39,14 @@ namespace RoomAPI.Services
         }
          public int CountofAvailableRoomsByHotel(int hotelId)
         {
-            ICollection<Room> roomDetails = _repo.GetAll().Where(p => p.Availability.ToLower().Contains("available") && p.HotelId==hotelId).ToList();
+            ICollection<Room> roomDetails = _repo.GetAll().Where(p => p.Availability.ToLower().Contains("Available".ToLower()) && p.HotelId==hotelId).ToList();
             int rooms = roomDetails.Count;
             return rooms;
 
         }
         public ICollection<Room> AvailableRooms()
         {
-            ICollection<Room> rooms = _repo.GetAll().Where(p => p.Availability.ToLower().Contains("available") ).ToList();
+            ICollection<Room> rooms = _repo.GetAll().Where(p => p.Availability.ToLower().Contains("Available".ToLower())).ToList();
             return rooms;
         }
 

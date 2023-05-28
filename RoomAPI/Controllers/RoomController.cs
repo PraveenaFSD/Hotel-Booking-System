@@ -26,9 +26,9 @@ namespace RoomAPI.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public ActionResult<Room> AddRoomDetails([FromBody] Room room)
         {
-            //Room roomData = _repo.Get(room.RoomNumber,room.HotelId);
-            //if(roomData!=null)
-            //    return BadRequest(new { message = "this room detail is already present so you cannot add" });
+            Room roomData = _repo.Get(room.RoomNumber, room.HotelId);
+            if (roomData != null)
+                return BadRequest(new { message = "this room detail is already present so you cannot add" });
             Room resultRoom = _repo.Add(room);
             if (resultRoom != null)
             {

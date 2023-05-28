@@ -15,8 +15,7 @@ namespace HotelAPI.Services
         }
         public ICollection<Hotel> GetHotelsByLocation(string location)
         {
-            ICollection<Hotel> hotels = _repo.GetAll().ToList();
-            hotels = hotels.Where(p => p.Location.ToLower() ==location.ToLower()).ToList();
+            ICollection<Hotel> hotels = _repo.GetAll().Where(p => p.Location.ToLower() ==location.ToLower()).ToList();
             if(hotels.Count > 0 )
             {
                 return hotels;
@@ -35,6 +34,14 @@ namespace HotelAPI.Services
             }
             return null;
 
+        }
+        public ICollection<Hotel> GetHotelDetailsByName(string hotelName) {
+            ICollection<Hotel> hotels = _repo.GetAll().Where(p => p.HotelName.ToLower() == hotelName.ToLower()).ToList();
+            if (hotels != null)
+            {
+                return hotels;
+            }
+            return null;
         }
     }
 }

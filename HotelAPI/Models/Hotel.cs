@@ -5,8 +5,8 @@ namespace HotelAPI.Models
     public class Hotel
     {
         [Key]
-        public int? HotelId { get; set; }
-        [MinLength(3, ErrorMessage = " Hotel name should be minimum 3 chars long")]
+        public int HotelId { get; set; }
+        [MinLength(2, ErrorMessage = " Hotel name should be minimum 3 chars long")]
         public string HotelName { get; set; }
 
         public string Address { get; set; }

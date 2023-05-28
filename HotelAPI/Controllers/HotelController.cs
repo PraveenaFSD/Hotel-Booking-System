@@ -18,18 +18,20 @@ namespace HotelAPI.Controllers
             _repo = repo;
             _service = service;
         }
-        [Authorize]
+        [Authorize(Roles ="staff")]
         [HttpPost("Add Hotels")]
         [ProducesResponseType(typeof(ICollection<Hotel>), 200)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public ActionResult<Hotel> AddHotelDetails([FromBody] Hotel hotel)
         {
-            var resultHotel = _repo.Add(hotel);
+            Hotel resultHotel = _repo.Add(hotel);
             if (resultHotel!=null)
             {
                 return Ok(resultHotel);
             }
-            return BadRequest(new { message = "Cannot Add Hotel Detail" });
+            return BadRequest(new { message = "Cannot Add Hotel Details" });
 
         }
         [HttpGet("Get All Hotel Details")]
@@ -42,21 +44,20 @@ namespace HotelAPI.Controllers
             {
                 return Ok(resultHotel);
             }
-            return BadRequest(new { message = "No Hotel Details" });
+            return BadRequest(new { message = "No Hotel Details Present" });
 
         }
         [HttpGet("Get Hotel Details By Name")]
         [ProducesResponseType(typeof(Hotel),StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Hotel> GetHotelDetailsByName(int hotelId)
+        public ActionResult<Hotel> HotelDetailsByName(string hotelName)
         {
-            var resultHotel = _repo.Get(hotelId);
+            var resultHotel = _service.GetHotelDetailsByName(hotelName);
             if (resultHotel != null)
             {
                 return Ok(resultHotel);
             }
-            return BadRequest(new { message="No Hotel Details" });
-
+            return NotFound(new { message="No Hotel Details " });
         }
         [Authorize(Roles ="staff")]
         [HttpDelete]
@@ -68,10 +69,10 @@ namespace HotelAPI.Controllers
         {
             Hotel hotel = _repo.Get(hotelId);
             if (hotel == null)
-                return NotFound( "No such hotel is present");
+                return NotFound(new { message = "No such hotel is present" });
             hotel = _repo.Delete(hotelId);
             if (hotel == null)
-                return BadRequest( "Unable to delete product");
+                return BadRequest(new{message ="Unable to delete product"});
             return Ok(hotel);
         }
 
@@ -85,13 +86,13 @@ namespace HotelAPI.Controllers
             {
                 return Ok(resultHotel);
             }
-            return BadRequest("No Hotel Details");
+            return NotFound(new { message="No Hotel Details" });
 
         }
         [HttpGet("Get Hotel Details By Amenities")]
         [ProducesResponseType(typeof(ICollection<Hotel>), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ICollection<Hotel>> GetHotelsByAmenities(string amenities)
+        public ActionResult<ICollection<Hotel>> HotelsByAmenities(string amenities)
         {
             var resultHotel = _service.GetHotelsByAmenities(amenities);
             if (resultHotel != null)
