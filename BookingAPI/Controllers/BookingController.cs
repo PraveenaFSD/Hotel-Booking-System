@@ -20,7 +20,7 @@ namespace BookingAPI.Controllers
             _service= bookingService;
 
         }
-        //[Authorize(Roles = "user")]
+        [Authorize(Roles = "user")]
         [HttpPost("Add Booking Details")]
         [ProducesResponseType(typeof(Booking), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -39,23 +39,23 @@ namespace BookingAPI.Controllers
             return NotFound(new { message = "This room is booked already" });
 
 
-
         }
-        //[Authorize(Roles = "user")]
+        [Authorize(Roles = "user")]
         [HttpDelete("Delete Booking Details")]
         [ProducesResponseType(typeof(Booking), 200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Booking> DeleteBookingDetails(int roomId)
+        public ActionResult<Booking> DeleteBookingDetails(int bookingId)
         {
-            Booking booking = _repo.Get(roomId);
+            Booking booking = _repo.Get(bookingId);
             if (booking == null)
                 return NotFound(new { message = "No such booking is present" });
-            booking = _repo.Delete(roomId);
+            booking = _repo.Delete(bookingId);
             if (booking == null)
                 return BadRequest(new { message = "Unable to delete room details" });
             return Ok(booking);
         }
+        [Authorize(Roles = "staff")]
         [HttpGet("Get All Booking Details")]
         [ProducesResponseType(typeof(ICollection<Booking>), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -66,9 +66,10 @@ namespace BookingAPI.Controllers
             {
                 return Ok(bookings);
             }
-            return BadRequest(new { message = "No Booking Details" });
+            return NotFound(new { message = "No Booking Details" });
 
         }
+        [Authorize]
         [HttpGet("Get bookings Details By Id")]
         [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

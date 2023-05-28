@@ -6,8 +6,7 @@ namespace BookingAPI.Interfaces
     {
         T Get(int bookingId);
         ICollection<T> GetAll();
-        T Add(Booking booking);
-       
+        T Add(Booking booking); 
         T Delete(int bookingId);
 
     }

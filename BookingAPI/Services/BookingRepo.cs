@@ -12,7 +12,7 @@ namespace BookingAPI.Services
 
         public BookingRepo(BookingContext bookingContext) {
             _context = bookingContext;
-            //_service= bookingService;
+           
         }
         public ICollection<Booking> GetAll()
         {
@@ -50,16 +50,13 @@ namespace BookingAPI.Services
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-
-
             }
             return null;
         }
         public Booking Add(Booking booking)
         {
 
-            //if(_service.CheckStatusOfRoom==null)
-            //{
+            
                 try
                 {
                     _context.Bookings.Add(booking);
@@ -70,7 +67,7 @@ namespace BookingAPI.Services
                 {
                     Debug.WriteLine(ex.Message);
                 }
-            //}
+            
             return null;
                
             
