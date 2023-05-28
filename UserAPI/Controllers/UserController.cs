@@ -20,57 +20,100 @@ namespace UserAPI.Controllers
             _service = userService;
             _repo = repo;
         }
+       
         [HttpPost("Register User")]
-        [ProducesResponseType(typeof(ICollection<UserDTO>), 200)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(UserDTO), 201)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<UserDTO> Register([FromBody] UserRegisterDTO userDTO)
         {
             var user = _service.Register(userDTO);
             if (user != null)
             {
-                return Ok(user);
-            }
-            return BadRequest("Cannot Register user");
-
-        }
-        [HttpPost("Login User")]
-        [ProducesResponseType(typeof(ICollection<UserDTO>), 200)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<UserDTO> Login([FromBody] UserDTO userDTO)
-        {
-            var user = _service.Login(userDTO);
-            if (user != null)
-            {
                 return Created("Home", user);
             }
-            return BadRequest("Cannot Login user. Password or username may be incorrect");
+            return BadRequest(new { message = "Cannot Register user" });
+
+
 
         }
         [Authorize]
-        [HttpPost("UpdateUserPassword")]
-        [ProducesResponseType(typeof(ICollection<UserDTO>), 200)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<UserDTO> UpdatePassword([FromBody] UserDTO userDTO)
+        [HttpPost("Login User")]
+        [ProducesResponseType(typeof(UserDTO), 200)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<UserDTO> Login([FromBody] UserDTO userDTO)
         {
-            var user = _repo.Update(userDTO);
+            UserDTO user = _service.Login(userDTO);
             if (user != null)
             {
                 return Ok(user);
             }
-            return BadRequest("Cannot Update Password");
+            return BadRequest(new { message = "Cannot Login user. Password or username may be incorrect or user may be not registered" });
+
+
+        }
+        [Authorize]
+        [HttpPost("Update User Password")]
+        [ProducesResponseType(typeof(ICollection<UserDTO>), 200)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<UserDTO> UpdatePassword([FromBody] UserDTO userDTO)
+        {
+            User userData = _repo.Get(userDTO.UserName);
+            if (userData == null)
+                return NotFound(new { message = "No such user is present" });
+            User user = _repo.Update(userDTO);
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            return BadRequest(new { message = "Cannot Update Password" });
+        }
+        [Authorize]
+        [HttpPost("Update User Details")]
+        [ProducesResponseType(typeof(ICollection<User>), 200)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<UserDTO> UpdateUserDeatils([FromBody] UserRegisterDTO user)
+        {
+            User userData = _repo.Get(user.UserName);
+            if (userData == null)
+                return NotFound(new { message = "No such user is present" });
+            User userDetails = _repo.Update(user);
+            if (userDetails != null)
+            {
+                return Ok(userDetails);
+            }
+            return BadRequest(new { message = "Cannot Update User Details" });
+        }
+        [Authorize(Roles ="admin")]
+        [HttpGet("GetAllUser")]
+        [ProducesResponseType(typeof(ICollection<User>), 200)]
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<User> GetAllUser()
+        {
+            ICollection<User> users = _repo.GetAll().ToList();
+            if (users != null)
+            {
+                return Ok(users);
+            }
+            return NotFound(new { message = "No User Details Currently" });
+
+        }
+        [Authorize]
+        [HttpDelete("Delete User")]
+        [ProducesResponseType(typeof(UserDTO), 200)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<UserDTO> DeleteRoom(string userName)
+        {
+            var user = _repo.Get(userName);
+            if (user == null)
+                return NotFound(new { message = "No such user is present" });
+            user = _repo.Delete(userName);
+            if (user == null)
+                return BadRequest(new { message = "Unable to delete room details" });
+            return Ok(user);
         }
     }
-    //[HttpGet("GetAllUser")]
-    //[ProducesResponseType(typeof(ICollection<UserDTO>), 200)]
-    //[ProducesResponseType(StatusCodes.Status404NotFound)]
-    //public ActionResult<UserDTO> GetAllUser([FromBody] UserDTO userDTO)
-    //{
-    //    var user = _service.GetAllUser(userDTO);
-    //    if (user != null)
-    //    {
-    //        return Created("Home", user);
-    //    }
-    //    return BadRequest("Cannot Login user. Password or username may be incorrect");
-
-    //}
 }

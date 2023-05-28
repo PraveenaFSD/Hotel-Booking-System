@@ -10,6 +10,7 @@ namespace UserAPI.Models
         public string UserName { get; set; }
         public byte[]? Password { get; set; }
         public byte[]? HashKey { get; set; }
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
         [MinLength(10, ErrorMessage = " Phone Number should be minimum 10 chars long")]
         public string PhoneNumber { get; set; }

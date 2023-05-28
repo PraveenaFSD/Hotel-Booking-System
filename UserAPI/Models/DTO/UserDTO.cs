@@ -6,10 +6,10 @@ namespace UserAPI.Models.DTO
     {
         public int? UserId { get; set; }
 
-        //[MinLength(3, ErrorMessage = " name should be minimum 3 chars long")]
+        [MinLength(3, ErrorMessage = " Name should be minimum 3 chars long")]
         public string UserName { get; set; }
 
-        //[Required(ErrorMessage = "Password cannot be empty")]
+        [Required(ErrorMessage = "Password cannot be empty")]
         public string Password { get; set; }
         public string? UserType { get; set; }
         public string? Token { get; set; }
