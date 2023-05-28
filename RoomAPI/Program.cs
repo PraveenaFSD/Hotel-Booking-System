@@ -23,7 +23,7 @@ namespace RoomAPI
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<RoomContext>
                (options => options.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
-            builder.Services.AddScoped<IRoomRepo<int, Room>, RoomRepo>();
+            builder.Services.AddScoped<IRoomRepo<int,int, Room>, RoomRepo>();
             builder.Services.AddScoped<RoomService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -6,9 +6,9 @@ namespace RoomAPI.Services
 {
     public class RoomService
     {
-        private readonly IRoomRepo<int, Room> _repo;
+        private readonly IRoomRepo<int,int, Room> _repo;
 
-        public RoomService(IRoomRepo<int, Room> repo)
+        public RoomService(IRoomRepo<int,int, Room> repo)
         {
             _repo = repo;
         }
@@ -32,7 +32,7 @@ namespace RoomAPI.Services
         }
         public int  CountofAvailableRooms()
         {
-            ICollection<Room> roomDetails=_repo.GetAll().Where(p => p.Availability.Contains("Available")).ToList();    
+            ICollection<Room> roomDetails = _repo.GetAll().Where(p => (p.Availability.ToLower()).Contains("Available".ToLower())).ToList();
             int rooms=roomDetails.Count;
             return rooms;
     

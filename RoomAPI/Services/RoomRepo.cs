@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace RoomAPI.Services
 {
-    public class RoomRepo:IRoomRepo<int,Room>
+    public class RoomRepo:IRoomRepo<int,int,Room>
     {
         private RoomContext _context;
 
@@ -15,7 +15,7 @@ namespace RoomAPI.Services
         {
             try
             {
-                 _context.Add(room);
+                _context.Rooms.Add(room);
                 _context.SaveChanges();
                 return room;
             }
@@ -38,11 +38,11 @@ namespace RoomAPI.Services
         }
 
 
-        public Room Get(int roomId)
+        public Room Get(int roomNumber,int hotelId)
         {
             try
             {
-                var roomDetails = _context.Rooms.FirstOrDefault(u => u.RoomId == roomId);
+                Room roomDetails = _context.Rooms.FirstOrDefault(u => u.RoomNumber == roomNumber&& u.HotelId==hotelId);
                 return roomDetails;
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ namespace RoomAPI.Services
         {
             try
             {
-                var roomDetails = _context.Rooms.FirstOrDefault(u => u.RoomId == room.HotelId);
+                Room roomDetails = _context.Rooms.FirstOrDefault(u => u.RoomNumber == room.RoomNumber && u.HotelId == room.HotelId);
                 if (roomDetails != null)
                 {
                     roomDetails.RoomType = room.RoomType;
@@ -73,17 +73,17 @@ namespace RoomAPI.Services
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                Debug.WriteLine(room);
+                
             }
 
             return null;
         }
-        public Room Delete(int roomId)
+        public Room Delete(int rooNumber, int hotelId)
         {
 
             try
             {
-                var room = Get(roomId);
+                Room room = Get(rooNumber, hotelId);
                 _context.Rooms.Remove(room);
                 _context.SaveChanges();
                 return room;

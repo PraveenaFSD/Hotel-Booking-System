@@ -9,10 +9,10 @@ namespace RoomAPI.Controllers
 {
     public class RoomController : Controller
     {
-        private readonly IRoomRepo<int, Room> _repo;
+        private readonly IRoomRepo<int,int, Room> _repo;
         private readonly RoomService _service;
 
-        public RoomController(IRoomRepo<int,Room> roomRepo, RoomService roomService)
+        public RoomController(IRoomRepo<int,int,Room> roomRepo, RoomService roomService)
         {
             _repo=roomRepo;
             _service=roomService;
@@ -21,10 +21,15 @@ namespace RoomAPI.Controllers
         [Authorize(Roles ="staff")]
         [HttpPost("Add Rooms")]
         [ProducesResponseType(typeof(Room), 200)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public ActionResult<Room> AddRoomDetails([FromBody] Room room)
         {
-            var resultRoom = _repo.Add(room);
+            //Room roomData = _repo.Get(room.RoomNumber,room.HotelId);
+            //if(roomData!=null)
+            //    return BadRequest(new { message = "this room detail is already present so you cannot add" });
+            Room resultRoom = _repo.Add(room);
             if (resultRoom != null)
             {
                 return Ok(resultRoom);
@@ -36,14 +41,16 @@ namespace RoomAPI.Controllers
         [Authorize(Roles = "staff")]
         [HttpDelete("Delete Room Details")]
         [ProducesResponseType(typeof(Room), 200)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Room> DeleteRoom(int roomId)
+        public ActionResult<Room> DeleteRoom(int roomNumber,int hotelId)
         {
-            Room room = _repo.Get(roomId);
+            Room room = _repo.Get(roomNumber, hotelId);
             if (room == null)
                 return NotFound(new { message = "No such room is present" });
-            room = _repo.Delete(roomId);
+            room = _repo.Delete(roomNumber, hotelId);
             if (room == null)
                 return BadRequest(new { message="Unable to delete room details" });
             return Ok(room);
@@ -53,9 +60,13 @@ namespace RoomAPI.Controllers
         [ProducesResponseType(typeof(Room), 200)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Room> UpdateRoomDetails([FromBody] Room room)
         {
+            Room roomDetails = _repo.Get(room.RoomNumber,room.HotelId);
+            if (roomDetails == null)
+                return NotFound(new { message = "No such room is present" });
             var roomResult = _repo.Update(room);
             if (roomResult != null)
             {
@@ -69,19 +80,20 @@ namespace RoomAPI.Controllers
         public ActionResult<Room> GetAllRoomDetails()
         {
             ICollection<Room> roomHotel = _repo.GetAll().ToList();
+            
             if (roomHotel != null)
             {
                 return Ok(roomHotel);
             }
-            return BadRequest(new { message="No Room Details" });
+            return NotFound(new { message="No Room Details" });
 
         }
-        [HttpGet("Get Room Details By Id")]
-        [ProducesResponseType(typeof(Room), StatusCodes.Status200OK)]
+        [HttpGet("Get Room Details By Room Number")]
+        [ProducesResponseType(typeof(Room), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Room> GetRoomDetailsById(int roomId)
+        public ActionResult<Room> GetRoomDetailsByNumber(int roomNumber,int hotelId)
         {
-            var resultRoom = _repo.Get(roomId);
+            Room resultRoom = _repo.Get(roomNumber, hotelId);
             if (resultRoom != null)
             {
                 return Ok(resultRoom);
@@ -144,6 +156,20 @@ namespace RoomAPI.Controllers
 
             }
             return NotFound(new { message = "No room Details in this particular hotel" });
+        }
+        [HttpGet("Get Room Details By Availability")]
+        [ProducesResponseType(typeof(ICollection<Room>), 200)]
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<Room> GetAvailableRoomsDetails()
+        {
+            ICollection<Room> rooms = _service.AvailableRooms();
+            if (rooms != null)
+            {
+                return Ok(rooms);
+            }
+            return NotFound(new { message = "No room Details available" });
+
         }
 
 

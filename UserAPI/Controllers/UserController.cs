@@ -73,6 +73,8 @@ namespace UserAPI.Controllers
         [ProducesResponseType(typeof(ICollection<User>), 200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+
         public ActionResult<UserDTO> UpdateUserDeatils([FromBody] UserRegisterDTO user)
         {
             User userData = _repo.Get(user.UserName);
@@ -88,6 +90,7 @@ namespace UserAPI.Controllers
         [Authorize(Roles ="admin")]
         [HttpGet("GetAllUser")]
         [ProducesResponseType(typeof(ICollection<User>), 200)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<User> GetAllUser()
