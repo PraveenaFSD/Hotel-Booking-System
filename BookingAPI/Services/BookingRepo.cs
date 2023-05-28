@@ -1,0 +1,85 @@
+﻿using BookingAPI.Interfaces;
+using BookingAPI.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+
+namespace BookingAPI.Services
+{
+    public class BookingRepo:IBookingRepo<int,Booking>
+    {
+        private readonly BookingContext _context;
+        
+
+        public BookingRepo(BookingContext bookingContext) {
+            _context = bookingContext;
+            //_service= bookingService;
+        }
+        public ICollection<Booking> GetAll()
+        {
+            ICollection<Booking> bookings = _context.Bookings.ToList();
+
+            if (bookings != null)
+            {
+                return bookings;
+            }
+            return null;
+        }
+        public Booking Get(int bookingId)
+        {
+            try
+            {
+                var bookings = _context.Bookings.FirstOrDefault(u => u.BookingId == bookingId);
+                return bookings;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return null;
+        }
+        public Booking Delete(int bookingId)
+        {
+
+            try
+            {
+                Booking booking = Get(bookingId);
+                _context.Bookings.Remove(booking);
+                _context.SaveChanges();
+                return booking;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+
+
+            }
+            return null;
+        }
+        public Booking Add(Booking booking)
+        {
+
+            //if(_service.CheckStatusOfRoom==null)
+            //{
+                try
+                {
+                    _context.Bookings.Add(booking);
+                    _context.SaveChanges();
+                    return booking;
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+            //}
+            return null;
+               
+            
+
+            
+            
+
+        }
+
+
+    }
+}
