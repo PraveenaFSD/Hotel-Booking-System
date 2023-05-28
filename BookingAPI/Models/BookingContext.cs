@@ -1,6 +1,13 @@
-﻿namespace BookingAPI.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace BookingAPI.Models
 {
-    public class BookinContext
+    public class BookingContext:DbContext
     {
+        public BookingContext(DbContextOptions options) : base(options)
+        {
+
+        }
+        public DbSet<Booking> Bookings { get; set; }
     }
 }

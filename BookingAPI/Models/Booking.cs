@@ -11,6 +11,8 @@ namespace BookingAPI.Models
         public DateTime CheckIn { get; set; }
         public DateTime CheckOut{ get; set; }
 
+        public int TotalPrice { get; set; }
+
 
 
     }
