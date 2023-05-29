@@ -6,14 +6,18 @@ namespace UserAPI.Models
     {
         [Key]
         public int? UserId { get; set; }
-         [MinLength(3, ErrorMessage = " name should be minimum 3 chars long")]
+        
+        [MinLength(3, ErrorMessage = " name should be minimum 3 chars long")]
         public string UserName { get; set; }
         public byte[]? Password { get; set; }
         public byte[]? HashKey { get; set; }
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
-        [MinLength(10, ErrorMessage = " Phone Number should be minimum 10 chars long")]
+        [Phone(ErrorMessage = "Invalid phone number")]
+
         public string PhoneNumber { get; set; }
+        [Range(18, 100, ErrorMessage = "Invalid Age  ")]
+
         public int Age { get; set; }
         public string UserType { get; set; }
     }

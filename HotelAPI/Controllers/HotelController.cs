@@ -44,7 +44,7 @@ namespace HotelAPI.Controllers
             {
                 return Ok(resultHotel);
             }
-            return BadRequest(new { message = "No Hotel Details Present" });
+            return NotFound(new { message = "No Hotel Details Present" });
 
         }
         [HttpGet("Get Hotel Details By Name")]
@@ -99,13 +99,13 @@ namespace HotelAPI.Controllers
             {
                 return Ok(resultHotel);
             }
-            return BadRequest(new { message = "No Hotel Details" });
+            return NotFound(new { message = "No Hotel Details" });
 
         }
         [Authorize(Roles ="staff")]
-        [HttpPost("UpdateHotelDetails")]
+        [HttpPut("UpdateHotelDetails")]
         [ProducesResponseType(typeof(ICollection<Hotel>), 200)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Hotel> UpdatePassword([FromBody] Hotel hotel)
         {
             var hotelResult = _repo.Update(hotel);

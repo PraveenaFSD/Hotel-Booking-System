@@ -69,13 +69,36 @@ namespace BookingAPI.Services
                 }
             
             return null;
-               
-            
-
-            
-            
-
+     
         }
+        public Booking Update(Booking booking)
+        {
+            try
+            {
+                Booking bookingDetails = _context.Bookings.FirstOrDefault(u => u.BookingId == booking.BookingId );
+                if (bookingDetails != null)
+                {
+                    booking.RoomId = bookingDetails.RoomId;
+                    booking.UserName = bookingDetails.UserName;
+                    booking.CheckIn = bookingDetails.CheckIn;
+                    booking.CheckOut = bookingDetails.CheckOut;
+                    booking.TotalPrice  = bookingDetails.TotalPrice;
+                    
+
+                    _context.SaveChanges();
+                    return bookingDetails;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+
+            }
+
+            return null;
+        }
+
 
 
     }

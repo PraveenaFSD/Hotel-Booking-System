@@ -31,12 +31,12 @@ namespace UserAPI.Controllers
             {
                 return Created("Home", user);
             }
-            return BadRequest(new { message = "Cannot Register user" });
+            return BadRequest(new Error(2, "Unable to register user"));
 
 
 
         }
-        [Authorize]
+        //[Authorize]
         [HttpPost("Login User")]
         [ProducesResponseType(typeof(UserDTO), 200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,12 +47,12 @@ namespace UserAPI.Controllers
             {
                 return Ok(user);
             }
-            return BadRequest(new { message = "Cannot Login user. Password or username may be incorrect or user may be not registered" });
+            return BadRequest(new Error(2,"Cannot Login user. Password or username may be incorrect or user may be not registered" ));
 
 
         }
         [Authorize]
-        [HttpPost("Update User Password")]
+        [HttpPut("Update User Password")]
         [ProducesResponseType(typeof(ICollection<UserDTO>), 200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -60,16 +60,16 @@ namespace UserAPI.Controllers
         {
             User userData = _repo.Get(userDTO.UserName);
             if (userData == null)
-                return NotFound(new { message = "No such user is present" });
+                return NotFound(new Error(1, "No such user is present" ));
             User user = _repo.Update(userDTO);
             if (user != null)
             {
                 return Ok(user);
             }
-            return BadRequest(new { message = "Cannot Update Password" });
+            return BadRequest(new Error(2, "Cannot Update Password" ));
         }
         [Authorize]
-        [HttpPost("Update User Details")]
+        [HttpPut("Update User Details")]
         [ProducesResponseType(typeof(ICollection<User>), 200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -79,19 +79,18 @@ namespace UserAPI.Controllers
         {
             User userData = _repo.Get(user.UserName);
             if (userData == null)
-                return NotFound(new { message = "No such user is present" });
+                return NotFound(new Error(1, "No such user is present" ));
             User userDetails = _repo.Update(user);
             if (userDetails != null)
             {
                 return Ok(userDetails);
             }
-            return BadRequest(new { message = "Cannot Update User Details" });
+            return BadRequest(new Error(2, "Cannot Update User Details" ));
         }
         [Authorize(Roles ="admin")]
         [HttpGet("GetAllUser")]
         [ProducesResponseType(typeof(ICollection<User>), 200)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<User> GetAllUser()
         {
@@ -100,7 +99,7 @@ namespace UserAPI.Controllers
             {
                 return Ok(users);
             }
-            return NotFound(new { message = "No User Details Currently" });
+            return NotFound(new Error(1,"No User Details Currently" ));
 
         }
         [Authorize]
@@ -112,10 +111,10 @@ namespace UserAPI.Controllers
         {
             var user = _repo.Get(userName);
             if (user == null)
-                return NotFound(new { message = "No such user is present" });
+                return NotFound(new Error(1, "No such user is present" ));
             user = _repo.Delete(userName);
             if (user == null)
-                return BadRequest(new { message = "Unable to delete room details" });
+                return BadRequest(new Error(2, "Unable to delete room details" ));
             return Ok(user);
         }
     }

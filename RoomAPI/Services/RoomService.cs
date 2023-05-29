@@ -49,6 +49,11 @@ namespace RoomAPI.Services
             ICollection<Room> rooms = _repo.GetAll().Where(p => p.Availability.ToLower().Contains("Available".ToLower())).ToList();
             return rooms;
         }
+        public ICollection<Room> AvailableRoomsByHotelId(int hotelID)
+        {
+            ICollection<Room> rooms = _repo.GetAll().Where(p => p.HotelId== hotelID).ToList();
+            return rooms;
+        }
 
 
     }

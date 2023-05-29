@@ -93,10 +93,7 @@ namespace UserAPI.Services
                 userResult.UserType = userData.UserType;
                 return userResult;
 
-
             }
-
-
 
             return null;
 
@@ -124,8 +121,6 @@ namespace UserAPI.Services
 
 
             }
-
-
 
             return null;
 

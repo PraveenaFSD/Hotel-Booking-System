@@ -10,8 +10,8 @@ namespace UserAPI.Interfaces
             ICollection<T> GetAll();
             T Add(User user);
             T Update(UserDTO user);
-        T Update(UserRegisterDTO user);
-        T Delete(string name);
+            T Update(UserRegisterDTO user);
+            T Delete(string name);
 
         }
     }

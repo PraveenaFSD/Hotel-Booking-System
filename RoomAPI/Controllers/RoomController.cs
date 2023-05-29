@@ -49,14 +49,14 @@ namespace RoomAPI.Controllers
         {
             Room room = _repo.Get(roomNumber, hotelId);
             if (room == null)
-                return NotFound(new { message = "No such room is present" });
+                return NotFound(new Error(1,"No such room is present" ));
             room = _repo.Delete(roomNumber, hotelId);
             if (room == null)
                 return BadRequest(new { message="Unable to delete room details" });
             return Ok(room);
         }
         [Authorize(Roles ="staff")]
-        [HttpPost("Update Room Details")]
+        [HttpPut("Update Room Details")]
         [ProducesResponseType(typeof(Room), 200)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +66,7 @@ namespace RoomAPI.Controllers
         {
             Room roomDetails = _repo.Get(room.RoomNumber,room.HotelId);
             if (roomDetails == null)
-                return NotFound(new { message = "No such room is present" });
+                return NotFound(new Error(1, "No such room is present"));
             var roomResult = _repo.Update(room);
             if (roomResult != null)
             {
@@ -85,7 +85,7 @@ namespace RoomAPI.Controllers
             {
                 return Ok(roomHotel);
             }
-            return NotFound(new { message="No Room Details" });
+            return NotFound(new Error(1, "No such room Details"));
 
         }
         [HttpGet("Get Room Details By Room Number")]
@@ -98,7 +98,8 @@ namespace RoomAPI.Controllers
             {
                 return Ok(resultRoom);
             }
-            return NotFound(new { message = "No room Details in this particular Id" });
+            return NotFound(new Error(1, "No room Details in this particular Id"));
+
 
         }
         [HttpGet("Get Room Details By Price")]
@@ -112,7 +113,8 @@ namespace RoomAPI.Controllers
             {
                 return Ok(rooms);
             }
-            return NotFound(new { message = "No room Details in this particular price" });
+            return NotFound(new Error(1, "No room Details in this particular Price"));
+
 
         }
         [HttpGet("Get Room Details By Price Range")]
@@ -169,6 +171,20 @@ namespace RoomAPI.Controllers
                 return Ok(rooms);
             }
             return NotFound(new { message = "No room Details available" });
+
+        }
+        [HttpGet("Get Room Details By HotelId")]
+        [ProducesResponseType(typeof(ICollection<Room>), 200)]
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<Room> ARoomsByHotelId(int hotelId)
+        {
+            ICollection<Room> rooms = _service.AvailableRoomsByHotelId(hotelId);
+            if (rooms != null)
+            {
+                return Ok(rooms);
+            }
+            return NotFound(new { message = "No room Details available in particular HotelID" });
 
         }
 

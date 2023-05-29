@@ -22,7 +22,7 @@ namespace BookingAPI.Controllers
         }
         [Authorize(Roles = "user")]
         [HttpPost("Add Booking Details")]
-        [ProducesResponseType(typeof(Booking), 200)]
+        [ProducesResponseType(typeof(Booking), 201)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Booking> AddRoomDetails([FromBody] Booking Booking)
         {
@@ -32,7 +32,7 @@ namespace BookingAPI.Controllers
                 var resultBooking = _repo.Add(Booking);
                 if (resultBooking != null)
                 {
-                    return Ok(resultBooking);
+                    return Created("Booking",resultBooking);
                 }
                 return BadRequest(new { message = "Cannot Book Room" });
             }
@@ -79,6 +79,22 @@ namespace BookingAPI.Controllers
             if (booking != null)
             {
                 return Ok(booking);
+            }
+            return NotFound(new { message = "No booking Details in this particular Id" });
+
+        }
+        [Authorize]
+        [HttpPut("Updating Booking Details")]
+        [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<Booking> GetRoomDetailsById(Booking booking)
+        {
+            var bookingData = _repo.Get(booking.BookingId);
+            if (bookingData!= null)
+            {
+                Booking bookingDetails= _repo.Update(booking);
+                return bookingDetails;
+                
             }
             return NotFound(new { message = "No booking Details in this particular Id" });
 
